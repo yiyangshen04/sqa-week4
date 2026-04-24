@@ -5,7 +5,10 @@ import pytest
 from src.exceptions import (
     InvalidDueDateError,
     InvalidReminderError,
+    InvalidSortKeyError,
     InvalidTaskTitleError,
+    TaskNotFoundError,
+    UnauthorizedTaskAccessError,
 )
 from src.models.priority import Priority
 from tests.conftest import FIXED_NOW
@@ -190,3 +193,43 @@ def test_sort_by_priority_with_a_single_task_returns_just_that_task(task_service
 
     # Assert
     assert results == [only]
+
+
+# exception-handling
+def test_get_task_with_unknown_id_raises_not_found(task_service, alice_id):
+    # Arrange
+    missing_id = 99999
+
+    # Act / Assert
+    with pytest.raises(TaskNotFoundError):
+        task_service.get_task(alice_id, missing_id)
+
+
+# exception-handling (also business logic: cross-user isolation)
+def test_get_another_users_task_raises_unauthorized(task_service, alice_id, bob_id):
+    # Arrange
+    alice_task = task_service.create_task(alice_id, title="Alice's private task")
+
+    # Act / Assert
+    with pytest.raises(UnauthorizedTaskAccessError):
+        task_service.get_task(bob_id, alice_task.id)
+
+
+# exception-handling (also biz logic)
+def test_delete_another_users_task_raises_unauthorized(task_service, alice_id, bob_id):
+    # Arrange
+    alice_task = task_service.create_task(alice_id, title="Alice's")
+
+    # Act / Assert
+    with pytest.raises(UnauthorizedTaskAccessError):
+        task_service.delete_task(bob_id, alice_task.id)
+
+
+# exception-handling
+def test_sorted_tasks_with_unknown_sort_key_raises(task_service, alice_id):
+    # Arrange
+    task_service.create_task(alice_id, title="anything")
+
+    # Act / Assert
+    with pytest.raises(InvalidSortKeyError):
+        task_service.sorted_tasks(alice_id, by="not-a-real-key")
