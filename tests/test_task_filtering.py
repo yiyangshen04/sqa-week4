@@ -18,7 +18,6 @@ def test_sort_by_priority_puts_high_before_low(task_service, alice_id):
     assert [t.title for t in result] == ["high", "mid", "low"]
 
 
-# equivalence-class: sort key = due_date (biz logic)
 def test_sort_by_due_date_puts_earliest_first(task_service, alice_id):
     # Arrange
     later = task_service.create_task(alice_id, title="later", due_date=FIXED_NOW + timedelta(days=5))
@@ -32,7 +31,6 @@ def test_sort_by_due_date_puts_earliest_first(task_service, alice_id):
     assert [t.title for t in result] == ["soon", "later", "undated"]
 
 
-# equivalence-class: sort key = completed (biz logic)
 def test_sort_by_completed_puts_incomplete_first(task_service, alice_id):
     # Arrange
     a = task_service.create_task(alice_id, title="a")

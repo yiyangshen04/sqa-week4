@@ -1,0 +1,73 @@
+flowchart TB
+  subgraph SRC["src: backend code under test"]
+    AuthService["AuthService\nregister / login"]
+    TaskService["TaskService\nCRUD / filter / sort / reminder"]
+    UserRepo["InMemoryUserRepository\nFake user storage"]
+    TaskRepo["InMemoryTaskRepository\nFake task storage"]
+    Hasher["PlainTextPasswordHasher\nStub password hasher"]
+    Clock["FixedClock\nControlled time"]
+    Reminder["NoOp / Mock / Spy / Dummy\nReminder collaborator"]
+  end
+
+  subgraph Fixtures["tests/conftest.py: test assembly layer"]
+    FClock["clock fixture"]
+    FTaskRepo["task_repo fixture"]
+    FUserRepo["user_repo fixture"]
+    FHasher["hasher fixture"]
+    FReminder["reminder fixture"]
+    FTaskService["task_service fixture"]
+    FAuthService["auth_service fixture"]
+    FAlice["alice_id fixture"]
+    FBob["bob_id fixture"]
+  end
+
+  FClock --> Clock
+  FTaskRepo --> TaskRepo
+  FUserRepo --> UserRepo
+  FHasher --> Hasher
+  FReminder --> Reminder
+
+  FTaskRepo --> FTaskService
+  FClock --> FTaskService
+  FReminder --> FTaskService
+  FTaskService --> TaskService
+
+  FUserRepo --> FAuthService
+  FHasher --> FAuthService
+  FAuthService --> AuthService
+
+  FAuthService --> FAlice
+  FAuthService --> FBob
+
+  TaskService --> TaskRepo
+  TaskService --> Clock
+  TaskService --> Reminder
+  AuthService --> UserRepo
+  AuthService --> Hasher
+
+  subgraph Tests["tests: test files"]
+    AuthTests["test_auth_service.py\nauth happy path / exceptions"]
+    TaskTests["test_task_service.py\nCRUD / validation / boundary / authorization"]
+    FilterTests["test_task_filtering.py\nsort / filter / search / ownership"]
+    ReminderTests["test_reminders.py\nMock / Spy / Dummy / reminder interaction"]
+  end
+
+  FAuthService --> AuthTests
+  FAlice --> TaskTests
+  FBob --> TaskTests
+  FTaskService --> TaskTests
+
+  FTaskService --> FilterTests
+  FAlice --> FilterTests
+  FBob --> FilterTests
+
+  FTaskRepo --> ReminderTests
+  FClock --> ReminderTests
+  FAlice --> ReminderTests
+
+  classDef src fill:#e9f5ff,stroke:#2c6f9e,stroke-width:1px,color:#18324a;
+  classDef fixture fill:#f7f1ff,stroke:#7a4cc2,stroke-width:1px,color:#2f1d4a;
+  classDef tests fill:#eef9ef,stroke:#3f8f4f,stroke-width:1px,color:#1f3f27;
+  class AuthService,TaskService,UserRepo,TaskRepo,Hasher,Clock,Reminder src;
+  class FClock,FTaskRepo,FUserRepo,FHasher,FReminder,FTaskService,FAuthService,FAlice,FBob fixture;
+  class AuthTests,TaskTests,FilterTests,ReminderTests tests;

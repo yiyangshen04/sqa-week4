@@ -10,8 +10,6 @@ from tests.conftest import FIXED_NOW
 
 
 class RecordingReminderService:
-    """Spy: hand-rolled recorder. Every schedule() call is appended
-    to self.calls so the test can inspect the interaction history."""
 
     def __init__(self):
         self.calls = []
@@ -20,7 +18,6 @@ class RecordingReminderService:
         self.calls.append((task.id, at))
 
 
-# business-logic — uses a Mock to verify the outgoing call
 def test_set_reminder_calls_the_reminder_service_with_task_and_time(task_repo, clock, alice_id):
     # Arrange
     reminder_mock = Mock()
@@ -39,7 +36,6 @@ def test_set_reminder_calls_the_reminder_service_with_task_and_time(task_repo, c
     assert called_when == when
 
 
-# business-logic — uses a Spy to inspect the history of calls
 def test_set_reminder_is_recorded_on_the_spy(task_repo, clock, alice_id):
     # Arrange
     spy = RecordingReminderService()

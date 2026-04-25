@@ -1,0 +1,37 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.13.7, pytest-9.0.3, pluggy-1.6.0
+rootdir: /Users/hanson/Desktop/sqa/week4
+configfile: pytest.ini
+testpaths: tests
+plugins: cov-7.1.0
+collected 34 items
+
+tests/test_auth_service.py ....                                          [ 11%]
+tests/test_reminders.py ....                                             [ 23%]
+tests/test_task_filtering.py .......                                     [ 44%]
+tests/test_task_service.py ...................                           [100%]
+
+================================ tests coverage ================================
+_______________ coverage: platform darwin, python 3.13.7-final-0 _______________
+
+Name                                  Stmts   Miss Branch BrPart  Cover   Missing
+---------------------------------------------------------------------------------
+src/__init__.py                           0      0      0      0   100%
+src/clock.py                             13      2      0      0    85%   12, 23
+src/exceptions.py                        17      0      0      0   100%
+src/models/__init__.py                    0      0      0      0   100%
+src/models/priority.py                    5      0      0      0   100%
+src/models/task.py                       14      0      0      0   100%
+src/models/user.py                        6      0      0      0   100%
+src/repositories/__init__.py              0      0      0      0   100%
+src/repositories/task_repository.py      23      0      0      0   100%
+src/repositories/user_repository.py      16      0      0      0   100%
+src/services/__init__.py                  0      0      0      0   100%
+src/services/auth_service.py             18      0      4      0   100%
+src/services/password_hasher.py           8      0      0      0   100%
+src/services/reminder_service.py          7      1      0      0    86%   14
+src/services/task_service.py             95     11     40      5    85%   61->64, 65, 67, 69-74, 75->77, 89-91
+---------------------------------------------------------------------------------
+TOTAL                                   222     14     44      5    91%
+Coverage HTML written to dir htmlcov
+============================== 34 passed in 0.15s ==============================
